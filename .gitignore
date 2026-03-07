@@ -1,7 +1,6 @@
 .vscode
-Game/Tabernacle_mac
-Tabernacle_mac
-Game/Tabernacle_unx
-Tabernacle_unx
+Israels_Temple_mac
+Israels_Temple.exe
+Israels_Temple_linux
 .DS_Store
-Tabernacle_linux
+/raylib
