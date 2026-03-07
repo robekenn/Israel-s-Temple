@@ -67,10 +67,35 @@ jobs:
           name: Tabernacle-linux
           path: Tabernacle_linux
 
+  build-windows:
+    name: Build windows target
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install raylib
+        run: |
+          git clone --depth 1 https://github.com/raysan5/raylib.git
+          cd raylib\src
+          mingw32-make PLATFORM=PLATFORM_DESKTOP
+          mingw32-make install
+        shell: cmd
+
+      - name: Build windows executable
+        run: mingw32-make win
+        shell: cmd
+
+      - name: Upload windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tabernacle-windows
+          path: Tabernacle.exe    
+
   release:
     name: Create GitHub Release
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [build-mac, build-linux]
+    needs: [build-mac, build-linux, build-windows]
     runs-on: ubuntu-latest
 
     steps:
@@ -86,10 +111,17 @@ jobs:
           name: Tabernacle-linux
           path: release-files
 
+      - name: Download windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Tabernacle-windows
+          path: release-files
+
       - name: Create release and upload binaries
         uses: softprops/action-gh-release@v2
         with:
           files: |
             release-files/Tabernacle_mac
-            release-files/Tabernacle_linux
+            release-files/Tabernacle_unx
+            release-files/Tabernacle.exe
           generate_release_notes: true
