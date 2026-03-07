@@ -1,6 +1,26 @@
 #include <stdio.h>
 #include "src/raylib.h"
 #include "Character_System/CharacterSystem.h"
+#include <limits.h>
+#include <unistd.h>
+#include <libgen.h>
+#ifdef __APPLE__
+#include <mach-o/dyld.h>
+#endif
+
+void SetWorkingDirectoryToExecutable(void)
+{
+#ifdef __APPLE__
+    char path[PATH_MAX];
+    uint32_t size = sizeof(path);
+
+    if (_NSGetExecutablePath(path, &size) == 0)
+    {
+        char *dir = dirname(path);
+        chdir(dir);
+    }
+#endif
+}
 
 void DrawBackground(Texture2D texture, float rotation, float scale, Color tint)
 {
@@ -23,7 +43,12 @@ void DrawBackground(Texture2D texture, float rotation, float scale, Color tint)
 
 int main(void)
 {
-    InitWindow(1920, 1080, "The Tabernacle");
+    SetWorkingDirectoryToExecutable();
+    int monitor = GetCurrentMonitor();
+    int screenWidth = GetMonitorWidth(monitor);
+    int screenHeight = GetMonitorHeight(monitor);
+
+    InitWindow(screenWidth, screenHeight, "The Tabernacle");
     ToggleFullscreen();
 
     SetTargetFPS(60);
