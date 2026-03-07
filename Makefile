@@ -14,30 +14,62 @@ SRC_DIRS = Game Game/Character_System
 # Find all .c files in those folders
 SRC = $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
 
-# Include folders
-INCLUDE_DIRS = -IGame/src -IGame/Character_System
+# Raylib directories
+RAYLIB_DIR = raylib
+RAYLIB_SRC = $(RAYLIB_DIR)/src
+RAYLIB_LIB = $(RAYLIB_SRC)/libraylib.a
 
+# Include folders
+INCLUDE_DIRS = -IGame/src -IGame/Character_System -I$(RAYLIB_SRC) -I$(RAYLIB_SRC)/external/glfw/include
+
+# -------------------------
+# Raylib setup for Unix/macOS
+# -------------------------
+raylib_unx:
+	@if [ ! -d "$(RAYLIB_DIR)" ]; then \
+		echo "Cloning raylib..."; \
+		git clone --depth 1 https://github.com/raysan5/raylib.git; \
+	fi
+	cd $(RAYLIB_SRC) && $(MAKE) PLATFORM=PLATFORM_DESKTOP
+
+# -------------------------
+# Raylib setup for Windows
+# -------------------------
+raylib_win:
+	if not exist $(RAYLIB_DIR) git clone --depth 1 https://github.com/raysan5/raylib.git
+	cd $(RAYLIB_SRC) && mingw32-make PLATFORM=PLATFORM_DESKTOP
+
+# -------------------------
 # Mac build
-mac:
+# -------------------------
+mac: raylib_unx
 	$(CC_MAC) $(INCLUDE_DIRS) \
 	-framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL \
-	Game/src/libraylib.a $(SRC) -o $(MAC_TARGET)
+	$(RAYLIB_LIB) $(SRC) -o $(MAC_TARGET)
 
+# -------------------------
 # Linux build
-unx:
+# -------------------------
+unx: raylib_unx
 	$(CC_UNX) $(INCLUDE_DIRS) \
 	-o $(UNX_TARGET) $(SRC) \
-	-lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+	$(RAYLIB_LIB) -lGL -lm -lpthread -ldl -lrt -lX11
 
+# -------------------------
 # Windows build
-win:
+# -------------------------
+win: raylib_win
 	$(CC_WIN) $(INCLUDE_DIRS) \
 	-o $(WIN_TARGET) $(SRC) \
-	-lraylib -lopengl32 -lgdi32 -lwinmm
+	$(RAYLIB_LIB) -lopengl32 -lgdi32 -lwinmm
 
+# -------------------------
 # Build all
+# -------------------------
 all: mac unx win
 
-# Clean build files
+# -------------------------
+# Clean
+# -------------------------
 clean:
 	rm -f $(MAC_TARGET) $(UNX_TARGET) $(WIN_TARGET)

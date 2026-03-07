@@ -21,11 +21,19 @@ jobs:
       - name: Build mac executable
         run: make mac
 
+      - name: Package mac build
+        run: |
+          mkdir -p release/Templegame-macos
+          cp Tabernacle_mac release/Templegame-macos/Tabernacle
+          cp -R Game release/Templegame-macos/Game
+          cd release
+          zip -r Templegame-macos.zip Templegame-macos
+
       - name: Upload mac artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Tabernacle-mac
-          path: Tabernacle_mac
+          name: Templegame-macos
+          path: release/Templegame-macos.zip
 
   build-linux:
     name: Build linux target
@@ -58,14 +66,21 @@ jobs:
           sudo make install
           sudo ldconfig
 
-      - name: Build unix executable
+      - name: Build linux executable
         run: make unx
+
+      - name: Package linux build
+        run: |
+          mkdir -p release/Templegame-linux
+          cp Tabernacle_linux release/Templegame-linux/Tabernacle
+          cp -R Game release/Templegame-linux/Game
+          tar -czf release/Templegame-linux.tar.gz -C release Templegame-linux
 
       - name: Upload linux artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Tabernacle-linux
-          path: Tabernacle_linux
+          name: Templegame-linux
+          path: release/Templegame-linux.tar.gz
 
   build-windows:
     name: Build windows target
@@ -76,26 +91,29 @@ jobs:
 
       - name: Build raylib
         run: |
-          git clone --depth 1 https://github.com/raysan5/raylib.git
+          if not exist raylib git clone --depth 1 https://github.com/raysan5/raylib.git
           cd raylib\src
           mingw32-make PLATFORM=PLATFORM_DESKTOP
         shell: cmd
 
       - name: Build windows executable
+        run: mingw32-make win
+        shell: cmd
+
+      - name: Package windows build
         run: |
-          gcc -IGame/src -IGame/Character_System ^
-            -Iraylib/src -Iraylib/src/external/glfw/include ^
-            -o Tabernacle.exe ^
-            Game\Tabernacle.c Game\Character_System\CharacterSystem.c ^
-            raylib\src\libraylib.a ^
-            -lopengl32 -lgdi32 -lwinmm
+          mkdir release
+          mkdir release\Templegame-windows
+          copy Tabernacle.exe release\Templegame-windows\Tabernacle.exe
+          xcopy Game release\Templegame-windows\Game /E /I /Y
+          powershell -Command "Compress-Archive -Path 'release\Templegame-windows' -DestinationPath 'release\Templegame-windows.zip'"
         shell: cmd
 
       - name: Upload windows artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Tabernacle-windows
-          path: Tabernacle.exe   
+          name: Templegame-windows
+          path: release/Templegame-windows.zip
 
   release:
     name: Create GitHub Release
@@ -107,26 +125,27 @@ jobs:
       - name: Download mac artifact
         uses: actions/download-artifact@v4
         with:
-          name: Tabernacle-mac
-          path: release-files
+          name: Templegame-macos
+          path: release-assets
 
       - name: Download linux artifact
         uses: actions/download-artifact@v4
         with:
-          name: Tabernacle-linux
-          path: release-files
+          name: Templegame-linux
+          path: release-assets
 
       - name: Download windows artifact
         uses: actions/download-artifact@v4
         with:
-          name: Tabernacle-windows
-          path: release-files
+          name: Templegame-windows
+          path: release-assets
 
-      - name: Create release and upload binaries
+      - name: Create release and upload packages
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            release-files/Tabernacle_mac
-            release-files/Tabernacle_linux
-            release-files/Tabernacle.exe
+            release-assets/Templegame-macos.zip
+            release-assets/Templegame-linux.tar.gz
+            release-assets/Templegame-windows.zip
           generate_release_notes: true
+          draft: true
