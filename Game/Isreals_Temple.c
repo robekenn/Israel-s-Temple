@@ -35,8 +35,8 @@ int main(void)
 
     SetTargetFPS(60);
 
-    Texture2D floorTexture = LoadTexture("Game/sprites/Land/Sand.png");
-    Texture2D wallTexture  = LoadTexture("Game/sprites/Land/Dark_Sand.png");
+    Texture2D tileset = LoadTexture("Game/sprites/Land/Sands.png");
+    SetTextureFilter(tileset, TEXTURE_FILTER_POINT);
 
     float rotation = 0.0f;
     float scale = 0.04f;
@@ -62,13 +62,13 @@ int main(void)
         BeginDrawing();
 
         ClearBackground(BLACK);
-        DrawMap(floorTexture, wallTexture);
+        DrawMap(tileset);
         DrawPlayer(player, spriteSheet, drawScale);
         //DrawTextureEx(texture, texturePosition, rotation, scale, WHITE);
 
         EndDrawing();
     }
-
+    UnloadTexture(tileset);
     CloseWindow();
 
     return 0;
