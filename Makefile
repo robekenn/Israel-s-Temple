@@ -4,12 +4,12 @@ CC_UNX = gcc
 CC_WIN = gcc
 
 # Targets
-MAC_TARGET = Tabernacle_mac
-UNX_TARGET = Tabernacle_linux
-WIN_TARGET = Tabernacle.exe
+MAC_TARGET = Israels_Temple_mac
+UNX_TARGET = Israels_Temple_linux
+WIN_TARGET = Israels_Temple.exe
 
 # App bundle
-APP_NAME = Tabernacle.app
+APP_NAME = Israels_Temple.app
 APP_DIR = $(APP_NAME)/Contents
 APP_MACOS_DIR = $(APP_DIR)/MacOS
 
@@ -72,18 +72,18 @@ mac: raylib_unx
 mac_app: mac
 	rm -rf $(APP_NAME)
 	mkdir -p $(APP_MACOS_DIR)
-	cp $(MAC_TARGET) $(APP_MACOS_DIR)/Tabernacle
+	cp $(MAC_TARGET) $(APP_MACOS_DIR)/Israels_Temple
 	cp -R Game $(APP_MACOS_DIR)/Game
 	echo '<?xml version="1.0" encoding="UTF-8"?>' > $(APP_DIR)/Info.plist
 	echo '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> $(APP_DIR)/Info.plist
 	echo '<plist version="1.0">' >> $(APP_DIR)/Info.plist
 	echo '<dict>' >> $(APP_DIR)/Info.plist
 	echo '    <key>CFBundleExecutable</key>' >> $(APP_DIR)/Info.plist
-	echo '    <string>Tabernacle</string>' >> $(APP_DIR)/Info.plist
+	echo '    <string>Israels_Temple</string>' >> $(APP_DIR)/Info.plist
 	echo '    <key>CFBundleIdentifier</key>' >> $(APP_DIR)/Info.plist
-	echo '    <string>com.yourname.tabernacle</string>' >> $(APP_DIR)/Info.plist
+	echo '    <string>com.yourname.Israels_Temple</string>' >> $(APP_DIR)/Info.plist
 	echo '    <key>CFBundleName</key>' >> $(APP_DIR)/Info.plist
-	echo '    <string>Tabernacle</string>' >> $(APP_DIR)/Info.plist
+	echo '    <string>Israels_Temple</string>' >> $(APP_DIR)/Info.plist
 	echo '    <key>CFBundlePackageType</key>' >> $(APP_DIR)/Info.plist
 	echo '    <string>APPL</string>' >> $(APP_DIR)/Info.plist
 	echo '    <key>CFBundleVersion</key>' >> $(APP_DIR)/Info.plist
@@ -92,7 +92,7 @@ mac_app: mac
 	echo '    <string>1.0.0</string>' >> $(APP_DIR)/Info.plist
 	echo '</dict>' >> $(APP_DIR)/Info.plist
 	echo '</plist>' >> $(APP_DIR)/Info.plist
-	chmod +x $(APP_MACOS_DIR)/Tabernacle
+	chmod +x $(APP_MACOS_DIR)/Israels_Temple
 
 # -------------------------
 # Linux build

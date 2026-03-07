@@ -24,9 +24,9 @@ jobs:
       - name: Package mac build
         run: |
           mkdir -p release
-          cp -R Tabernacle.app release/Tabernacle.app
+          cp -R Israels_Temple.app release/Israels_Temple.app
           cd release
-          zip -r Templegame-macos.zip Tabernacle.app
+          zip -r Templegame-macos.zip Israels_Temple.app
 
       - name: Upload mac artifact
         uses: actions/upload-artifact@v4
@@ -63,8 +63,8 @@ jobs:
       - name: Package linux build
         run: |
           mkdir -p release/Templegame-linux
-          cp Tabernacle_linux release/Templegame-linux/Tabernacle
-          chmod +x release/Templegame-linux/Tabernacle
+          cp Israels_Temple_linux release/Templegame-linux/Israels_Temple
+          chmod +x release/Templegame-linux/Israels_Temple
           cp -R Game release/Templegame-linux/Game
           tar -czf release/Templegame-linux.tar.gz -C release Templegame-linux
 
@@ -92,7 +92,7 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path release/Templegame-windows | Out-Null
-          Copy-Item Tabernacle.exe release/Templegame-windows/Tabernacle.exe
+          Copy-Item Israels_Temple.exe release/Templegame-windows/Israels_Temple.exe
           Copy-Item Game release/Templegame-windows/Game -Recurse
           Compress-Archive -Path release/Templegame-windows -DestinationPath release/Templegame-windows.zip -Force
 

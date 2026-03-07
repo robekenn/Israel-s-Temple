@@ -44,7 +44,7 @@ void DrawBackground(Texture2D texture, float rotation, float scale, Color tint)
 int main(void)
 {
     SetWorkingDirectoryToExecutable();
-    InitWindow(1920, 1080, "The Tabernacle");
+    InitWindow(1920, 1080, "Israel's Temple");
     ToggleFullscreen();
 
     SetTargetFPS(60);
