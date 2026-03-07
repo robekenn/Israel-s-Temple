@@ -26,8 +26,14 @@ void UpdatePlayer(Player *player)
 {
     float dt = GetFrameTime();
     bool moving = false;
+    float sprint = 1.0f;
 
     Vector2 movement = {0.0f, 0.0f};
+
+    if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
+    {
+        sprint = 1.5f;
+    }
 
     // RIGHT (D or Right Arrow)
     if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
@@ -71,8 +77,8 @@ void UpdatePlayer(Player *player)
             movement.y /= length;
         }
 
-        player->position.x += movement.x * player->speed * dt;
-        player->position.y += movement.y * player->speed * dt;
+        player->position.x += movement.x * player->speed * sprint * dt;
+        player->position.y += movement.y * player->speed * sprint * dt;
 
         player->animTimer += dt;
 
