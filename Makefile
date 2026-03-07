@@ -4,7 +4,7 @@ CC_UNX = gcc
 
 # Targets
 MAC_TARGET = Tabernacle_mac
-UNX_TARGET = Tabernacle_unx
+UNX_TARGET = Tabernacle_linux
 
 # Main source folders to search
 SRC_DIRS = Game Game/Character_System

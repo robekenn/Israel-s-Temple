@@ -3,8 +3,12 @@ name: C/C++ CI
 on:
   push:
     branches: [ "main" ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ "main" ]
+
+permissions:
+  contents: write
 
 jobs:
   build-mac:
@@ -16,6 +20,12 @@ jobs:
 
       - name: Build mac executable
         run: make mac
+
+      - name: Upload mac artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tabernacle-mac
+          path: Tabernacle_mac
 
   build-linux:
     name: Build linux target
@@ -50,3 +60,35 @@ jobs:
 
       - name: Build unix executable
         run: make unx
+
+      - name: Upload linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tabernacle-linux
+          path: Tabernacle_linux
+
+  release:
+    name: Create GitHub Release
+    needs: [build-mac, build-linux]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download mac artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Tabernacle-mac
+          path: release-files
+
+      - name: Download linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Tabernacle-linux
+          path: release-files
+
+      - name: Create release and upload binaries
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release-files/Tabernacle_mac
+            release-files/Tabernacle_linux
+          generate_release_notes: true
