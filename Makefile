@@ -1,7 +1,7 @@
 # Compiler definitions
 CC_MAC = clang
 CC_UNX = gcc
-CC_WIN = mingw32-gcc
+CC_WIN = gcc
 
 # Targets
 MAC_TARGET = Tabernacle_mac
