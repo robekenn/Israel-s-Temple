@@ -15,7 +15,7 @@ mac:
 
 # Linux / Windows (WSL or MinGW)
 unx:
-	$(CC_UNX) -o $(UNX_TARGET) Game/$(SRC) -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+	$(CC_UNX) -o $(UNX_TARGET) Game/$(SRC) Game/src/libraylib.a -lGL -lm -lpthread -ldl -lrt -lX11
 
 # Build both
 all: mac unx
