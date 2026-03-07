@@ -127,6 +127,6 @@ jobs:
         with:
           files: |
             release-files/Tabernacle_mac
-            release-files/Tabernacle_unx
+            release-files/Tabernacle_linux
             release-files/Tabernacle.exe
           generate_release_notes: true

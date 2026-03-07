@@ -5,7 +5,7 @@ CC_WIN = gcc
 
 # Targets
 MAC_TARGET = Tabernacle_mac
-UNX_TARGET = Tabernacle_unx
+UNX_TARGET = Tabernacle_linux
 WIN_TARGET = Tabernacle.exe
 
 # Main source folders to search
