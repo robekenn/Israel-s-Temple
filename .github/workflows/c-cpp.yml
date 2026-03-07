@@ -17,6 +17,12 @@ jobs:
       - name: Build mac executable
         run: make mac
 
+      - name: Upload mac artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tabernacle_mac
+          path: Tabernacle_mac
+
   build-linux:
     name: Build linux target
     runs-on: ubuntu-latest
@@ -31,3 +37,9 @@ jobs:
 
       - name: Build unix executable
         run: make unx
+
+      - name: Upload linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tabernacle_unx
+          path: Tabernacle_unx
