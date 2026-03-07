@@ -25,19 +25,16 @@ INCLUDE_DIRS = -IGame/src -IGame/Character_System -I$(RAYLIB_SRC) -I$(RAYLIB_SRC
 # -------------------------
 # Raylib setup for Unix/macOS
 # -------------------------
+# Raylib setup for Unix/macOS
 raylib_unx:
-	@if [ ! -d "$(RAYLIB_DIR)" ]; then \
-		echo "Cloning raylib..."; \
-		git clone --depth 1 https://github.com/raysan5/raylib.git; \
-	fi
+	if [ ! -d "$(RAYLIB_DIR)" ]; then git clone --depth 1 https://github.com/raysan5/raylib.git; fi
 	cd $(RAYLIB_SRC) && $(MAKE) PLATFORM=PLATFORM_DESKTOP
 
-# -------------------------
 # Raylib setup for Windows
-# -------------------------
 raylib_win:
-	if not exist $(RAYLIB_DIR) git clone --depth 1 https://github.com/raysan5/raylib.git
+	if [ ! -d "$(RAYLIB_DIR)" ]; then git clone --depth 1 https://github.com/raysan5/raylib.git; fi
 	cd $(RAYLIB_SRC) && mingw32-make PLATFORM=PLATFORM_DESKTOP
+	
 
 # -------------------------
 # Mac build
