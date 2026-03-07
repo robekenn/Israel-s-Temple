@@ -44,11 +44,7 @@ void DrawBackground(Texture2D texture, float rotation, float scale, Color tint)
 int main(void)
 {
     SetWorkingDirectoryToExecutable();
-    int monitor = GetCurrentMonitor();
-    int screenWidth = GetMonitorWidth(monitor);
-    int screenHeight = GetMonitorHeight(monitor);
-
-    InitWindow(screenWidth, screenHeight, "The Tabernacle");
+    InitWindow(1920, 1080, "The Tabernacle");
     ToggleFullscreen();
 
     SetTargetFPS(60);
