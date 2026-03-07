@@ -4,6 +4,9 @@
 #include <limits.h>
 #include <unistd.h>
 #include <libgen.h>
+#include "MapLoader/MapLoader.h"
+
+
 #ifdef __APPLE__
 #include <mach-o/dyld.h>
 #endif
@@ -22,23 +25,6 @@ void SetWorkingDirectoryToExecutable(void)
 #endif
 }
 
-void DrawBackground(Texture2D texture, float rotation, float scale, Color tint)
-{
-    float texWidth = texture.width * scale;
-    float texHeight = texture.height * scale;
-
-    int screenWidth = GetScreenWidth();
-    int screenHeight = GetScreenHeight();
-
-    for (float y = 0; y < screenHeight; y += texHeight)
-    {
-        for (float x = 0; x < screenWidth; x += texWidth)
-        {
-            Vector2 position = { x, y };
-            DrawTextureEx(texture, position, rotation, scale, tint);
-        }
-    }
-}
 
 
 int main(void)
@@ -49,19 +35,11 @@ int main(void)
 
     SetTargetFPS(60);
 
-    Texture2D texture = LoadTexture("Game/sprites/Land/Dark_Sand.png");
-
-    if (texture.id == 0) {
-        printf("Failed to load texture!\n");
-    }
+    Texture2D floorTexture = LoadTexture("Game/sprites/Land/Sand.png");
+    Texture2D wallTexture  = LoadTexture("Game/sprites/Land/Dark_Sand.png");
 
     float rotation = 0.0f;
     float scale = 0.04f;
-
-    Vector2 texturePosition = {
-        GetScreenWidth() / 2.0f - (texture.width * scale) / 2.0f,
-        GetScreenHeight() / 2.0f - (texture.height * scale) / 2.0f
-    };
 
     Texture2D spriteSheet = LoadTexture("Game/sprites/Characters/character_9-16.png");
 
@@ -84,14 +62,13 @@ int main(void)
         BeginDrawing();
 
         ClearBackground(BLACK);
-        DrawBackground(texture, rotation, scale, WHITE);
+        DrawMap(floorTexture, wallTexture);
         DrawPlayer(player, spriteSheet, drawScale);
         //DrawTextureEx(texture, texturePosition, rotation, scale, WHITE);
 
         EndDrawing();
     }
 
-    UnloadTexture(texture);
     CloseWindow();
 
     return 0;
