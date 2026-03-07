@@ -27,12 +27,26 @@ RAYLIB_LIB = $(RAYLIB_SRC)/libraylib.a
 # Include folders
 INCLUDE_DIRS = -IGame/src -IGame/Character_System -I$(RAYLIB_SRC) -I$(RAYLIB_SRC)/external/glfw/include
 
+# macOS frameworks needed for raylib
+MAC_FRAMEWORKS = \
+	-framework Cocoa \
+	-framework OpenGL \
+	-framework IOKit \
+	-framework CoreVideo \
+	-framework CoreAudio \
+	-framework AudioToolbox \
+	-framework AudioUnit
+
 # -------------------------
 # Raylib setup for Unix/macOS
 # -------------------------
 raylib_unx:
-	if [ ! -f "$(RAYLIB_LIB)" ]; then \
-		if [ ! -d "$(RAYLIB_DIR)" ]; then git clone --depth 1 https://github.com/raysan5/raylib.git; fi; \
+	@if [ ! -f "$(RAYLIB_LIB)" ]; then \
+		if [ ! -d "$(RAYLIB_DIR)" ]; then \
+			echo "Cloning raylib..."; \
+			git clone --depth 1 https://github.com/raysan5/raylib.git; \
+		fi; \
+		echo "Building raylib..."; \
 		cd $(RAYLIB_SRC) && $(MAKE) PLATFORM=PLATFORM_DESKTOP; \
 	fi
 
@@ -40,8 +54,12 @@ raylib_unx:
 # Raylib setup for Windows
 # -------------------------
 raylib_win:
-	if [ ! -f "$(RAYLIB_LIB)" ]; then \
-		if [ ! -d "$(RAYLIB_DIR)" ]; then git clone --depth 1 https://github.com/raysan5/raylib.git; fi; \
+	@if [ ! -f "$(RAYLIB_LIB)" ]; then \
+		if [ ! -d "$(RAYLIB_DIR)" ]; then \
+			echo "Cloning raylib..."; \
+			git clone --depth 1 https://github.com/raysan5/raylib.git; \
+		fi; \
+		echo "Building raylib for Windows..."; \
 		cd $(RAYLIB_SRC) && mingw32-make PLATFORM=PLATFORM_DESKTOP; \
 	fi
 
@@ -49,9 +67,7 @@ raylib_win:
 # Mac build
 # -------------------------
 mac: raylib_unx
-	$(CC_MAC) $(INCLUDE_DIRS) \
-	-framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL \
-	$(RAYLIB_LIB) $(SRC) -o $(MAC_TARGET)
+	$(CC_MAC) $(INCLUDE_DIRS) $(SRC) $(RAYLIB_LIB) $(MAC_FRAMEWORKS) -o $(MAC_TARGET)
 
 mac_app: mac
 	rm -rf $(APP_NAME)
@@ -82,17 +98,13 @@ mac_app: mac
 # Linux build
 # -------------------------
 unx: raylib_unx
-	$(CC_UNX) $(INCLUDE_DIRS) \
-	-o $(UNX_TARGET) $(SRC) \
-	$(RAYLIB_LIB) -lGL -lm -lpthread -ldl -lrt -lX11
+	$(CC_UNX) $(INCLUDE_DIRS) -o $(UNX_TARGET) $(SRC) $(RAYLIB_LIB) -lGL -lm -lpthread -ldl -lrt -lX11
 
 # -------------------------
 # Windows build
 # -------------------------
 win: raylib_win
-	$(CC_WIN) $(INCLUDE_DIRS) \
-	-o $(WIN_TARGET) $(SRC) \
-	$(RAYLIB_LIB) -lopengl32 -lgdi32 -lwinmm
+	$(CC_WIN) $(INCLUDE_DIRS) -o $(WIN_TARGET) $(SRC) $(RAYLIB_LIB) -lopengl32 -lgdi32 -lwinmm
 
 # -------------------------
 # Build all
