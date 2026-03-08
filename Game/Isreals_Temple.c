@@ -33,10 +33,15 @@ int main(void)
     InitWindow(1920, 1080, "Israel's Temple");
     ToggleFullscreen();
 
-    SetTargetFPS(60);
+    TileMap map;
+    
+    if (!LoadTileMap("Game/MapLoader/Maps/Map1.json", &map)) {
+        CloseWindow();
+        return 1;
+    };
 
-    Texture2D tileset = LoadTexture("Game/sprites/Land/Sands.png");
-    SetTextureFilter(tileset, TEXTURE_FILTER_POINT);
+    
+    SetTargetFPS(60);
 
     float rotation = 0.0f;
     float scale = 0.04f;
@@ -51,24 +56,26 @@ int main(void)
     player.animTimer = 0.0f;
     player.speed = 120.0f;
 
-    float drawScale = 4.0f;
+    float PlayerScale = 4.0f;
 
     while (!WindowShouldClose())
     {
         //Update
-        UpdatePlayer(&player);
+        UpdatePlayer(&player,&map, PlayerScale);
 
+        
         //Draw
         BeginDrawing();
 
         ClearBackground(BLACK);
-        DrawMap(tileset);
-        DrawPlayer(player, spriteSheet, drawScale);
+        DrawTileMap(&map);
+        DrawPlayer(player, spriteSheet, PlayerScale);
         //DrawTextureEx(texture, texturePosition, rotation, scale, WHITE);
 
         EndDrawing();
     }
-    UnloadTexture(tileset);
+    UnloadTileMap(&map);
+    UnloadTexture(spriteSheet);
     CloseWindow();
 
     return 0;
