@@ -4,6 +4,32 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+int GetLayerTileAt(TileMap *map, const char *layerName, int tileX, int tileY)
+{
+    if (!map) return 0;
+    if (tileX < 0 || tileX >= map->width || tileY < 0 || tileY >= map->height) return 0;
+
+    MapLayer *layer = FindLayer(map, layerName);
+    if (!layer || !layer->tiles) return 0;
+
+    int index = tileY * map->width + tileX;
+    return layer->tiles[index];
+}
+
+int GetLayerTileAtWorld(TileMap *map, const char *layerName, Vector2 worldPosition)
+{
+    if (!map) return 0;
+
+    float tileWidth = GetMapTileWidthOnScreen(map);
+    float tileHeight = GetMapTileHeightOnScreen(map);
+
+    int tileX = (int)(worldPosition.x / tileWidth);
+    int tileY = (int)(worldPosition.y / tileHeight);
+
+    return GetLayerTileAt(map, layerName, tileX, tileY);
+}
+
 static char *ReadFileTextSimple(const char *filePath)
 {
     FILE *fp = fopen(filePath, "rb");
@@ -268,7 +294,7 @@ void DrawTileMap(TileMap *map)
 {
     if (!map) return;
 
-    MapLayer *ground = FindLayer(map, "Tile Layer 1");
+    MapLayer *ground = FindLayer(map, "Ground");
     MapLayer *noCol = FindLayer(map, "Temple_NoCol");
     MapLayer *col = FindLayer(map, "TempleCol");
 

@@ -20,6 +20,7 @@ typedef struct Player {
     int characterIndex;
 } Player;
 
+void SetPlayerToTileCenter(Player *player, TileMap *map, int tileX, int tileY);
 Rectangle GetPlayerSourceRect(Player player);
 void UpdatePlayer(Player *player, TileMap *map, float drawScale);
 void DrawPlayer(Player player, Texture2D spriteSheet, float drawScale);

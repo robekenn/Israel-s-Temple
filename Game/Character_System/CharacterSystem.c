@@ -1,6 +1,16 @@
 #include "CharacterSystem.h"
 #include <math.h>
 
+void SetPlayerToTileCenter(Player *player, TileMap *map, int tileX, int tileY)
+{
+    float tileWidth = GetMapTileWidthOnScreen(map);
+    float tileHeight = GetMapTileHeightOnScreen(map);
+
+    player->position.x = tileX * tileWidth + tileWidth / 2.0f;
+    player->position.y = tileY * tileHeight + tileHeight / 2.0f;
+}
+
+
 static bool PlayerCollidesAt(TileMap *map, Vector2 centerPos, float drawScale)
 {
     float spriteWidth = SPRITE_WIDTH * drawScale;

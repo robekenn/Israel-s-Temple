@@ -44,4 +44,8 @@ bool IsMapCollisionTile(TileMap *map, int tileX, int tileY);
 float GetMapTileWidthOnScreen(TileMap *map);
 float GetMapTileHeightOnScreen(TileMap *map);
 
+int GetLayerTileAt(TileMap *map, const char *layerName, int tileX, int tileY);
+int GetLayerTileAtWorld(TileMap *map, const char *layerName, Vector2 worldPosition);
+
+static MapLayer *FindLayer(TileMap *map, const char *name);
 #endif
