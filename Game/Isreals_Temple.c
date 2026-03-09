@@ -38,7 +38,7 @@ int main(void)
     SetWorkingDirectoryToExecutable();
 
     InitWindow(1920, 1080, "Israel's Temple");
-    ToggleFullscreen();
+    ToggleBorderlessWindowed();
     SetTargetFPS(60);
 
     // -----------------------------
