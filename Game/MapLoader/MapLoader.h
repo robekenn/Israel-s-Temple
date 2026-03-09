@@ -36,16 +36,16 @@ typedef struct TileMap {
 
 bool LoadTileMap(const char *jsonFilePath, TileMap *map);
 void UnloadTileMap(TileMap *map);
-void DrawTileMap(TileMap *map);
+
+void DrawTileMap(const TileMap *map);
+
+int GetLayerTileAt(const TileMap *map, const char *layerName, int tileX, int tileY);
+int GetLayerTileAtWorld(const TileMap *map, const char *layerName, Vector2 worldPosition);
 
 bool IsMapCollisionAt(TileMap *map, Vector2 worldPosition);
 bool IsMapCollisionTile(TileMap *map, int tileX, int tileY);
 
-float GetMapTileWidthOnScreen(TileMap *map);
-float GetMapTileHeightOnScreen(TileMap *map);
+float GetMapTileWidthOnScreen(const TileMap *map);
+float GetMapTileHeightOnScreen(const TileMap *map);
 
-int GetLayerTileAt(TileMap *map, const char *layerName, int tileX, int tileY);
-int GetLayerTileAtWorld(TileMap *map, const char *layerName, Vector2 worldPosition);
-
-static MapLayer *FindLayer(TileMap *map, const char *name);
 #endif

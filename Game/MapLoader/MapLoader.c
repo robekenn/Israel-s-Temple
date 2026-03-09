@@ -4,20 +4,26 @@
 #include <stdlib.h>
 #include <string.h>
 
+static char *ReadFileTextSimple(const char *filePath);
+static const MapLayer *FindLayer(const TileMap *map, const char *name);
+static MapLayer *FindLayerMutable(TileMap *map, const char *name);
+static const MapTileset *FindTilesetForGid(const TileMap *map, int gid);
+static void DrawSingleLayer(const TileMap *map, const MapLayer *layer);
 
-int GetLayerTileAt(TileMap *map, const char *layerName, int tileX, int tileY)
-{
+
+int GetLayerTileAt(const TileMap *map, const char *layerName, int tileX, int tileY){
     if (!map) return 0;
+
     if (tileX < 0 || tileX >= map->width || tileY < 0 || tileY >= map->height) return 0;
 
-    MapLayer *layer = FindLayer(map, layerName);
+    const MapLayer *layer = FindLayer(map, layerName);
     if (!layer || !layer->tiles) return 0;
 
     int index = tileY * map->width + tileX;
     return layer->tiles[index];
 }
 
-int GetLayerTileAtWorld(TileMap *map, const char *layerName, Vector2 worldPosition)
+int GetLayerTileAtWorld(const TileMap *map, const char *layerName, Vector2 worldPosition)
 {
     if (!map) return 0;
 
@@ -56,19 +62,37 @@ static char *ReadFileTextSimple(const char *filePath)
     return buffer;
 }
 
-static MapLayer *FindLayer(TileMap *map, const char *name)
+static const MapLayer *FindLayer(const TileMap *map, const char *name)
 {
+    if (!map || !name) return NULL;
+
     for (int i = 0; i < map->layerCount; i++) {
         if (strcmp(map->layers[i].name, name) == 0) {
             return &map->layers[i];
         }
     }
+
     return NULL;
 }
 
-static MapTileset *FindTilesetForGid(TileMap *map, int gid)
+static MapLayer *FindLayerMutable(TileMap *map, const char *name)
 {
-    MapTileset *best = NULL;
+    if (!map || !name) return NULL;
+
+    for (int i = 0; i < map->layerCount; i++) {
+        if (strcmp(map->layers[i].name, name) == 0) {
+            return &map->layers[i];
+        }
+    }
+
+    return NULL;
+}
+
+static const MapTileset *FindTilesetForGid(const TileMap *map, int gid)
+{
+    if (!map) return NULL;
+
+    const MapTileset *best = NULL;
 
     for (int i = 0; i < map->tilesetCount; i++) {
         if (gid >= map->tilesets[i].firstgid) {
@@ -81,13 +105,15 @@ static MapTileset *FindTilesetForGid(TileMap *map, int gid)
     return best;
 }
 
-float GetMapTileWidthOnScreen(TileMap *map)
+float GetMapTileWidthOnScreen(const TileMap *map)
 {
+    if (!map || map->width == 0) return 0.0f;
     return (float)GetScreenWidth() / map->width;
 }
 
-float GetMapTileHeightOnScreen(TileMap *map)
+float GetMapTileHeightOnScreen(const TileMap *map)
 {
+    if (!map || map->height == 0) return 0.0f;
     return (float)GetScreenHeight() / map->height;
 }
 
@@ -241,9 +267,9 @@ void UnloadTileMap(TileMap *map)
     map->tilesetCount = 0;
 }
 
-static void DrawSingleLayer(TileMap *map, MapLayer *layer)
+static void DrawSingleLayer(const TileMap *map, const MapLayer *layer)
 {
-    if (!layer || !layer->tiles || !layer->visible) return;
+    if (!map || !layer || !layer->tiles || !layer->visible) return;
 
     float tileWidthOnScreen = GetMapTileWidthOnScreen(map);
     float tileHeightOnScreen = GetMapTileHeightOnScreen(map);
@@ -255,7 +281,7 @@ static void DrawSingleLayer(TileMap *map, MapLayer *layer)
 
             if (gid == 0) continue;
 
-            MapTileset *tileset = FindTilesetForGid(map, gid);
+            const MapTileset *tileset = FindTilesetForGid(map, gid);
             if (!tileset) continue;
 
             int localTile = gid - tileset->firstgid;
@@ -290,13 +316,13 @@ static void DrawSingleLayer(TileMap *map, MapLayer *layer)
     }
 }
 
-void DrawTileMap(TileMap *map)
+void DrawTileMap(const TileMap *map)
 {
     if (!map) return;
 
-    MapLayer *ground = FindLayer(map, "Ground");
-    MapLayer *noCol = FindLayer(map, "Temple_NoCol");
-    MapLayer *col = FindLayer(map, "TempleCol");
+    const MapLayer *ground = FindLayer(map, "Ground");
+    const MapLayer *noCol = FindLayer(map, "Temple_NoCol");
+    const MapLayer *col = FindLayer(map, "TempleCol");
 
     if (ground) DrawSingleLayer(map, ground);
     if (noCol) DrawSingleLayer(map, noCol);
@@ -311,7 +337,7 @@ bool IsMapCollisionTile(TileMap *map, int tileX, int tileY)
         return true;
     }
 
-    MapLayer *col = FindLayer(map, "TempleCol");
+    MapLayer *col = FindLayerMutable(map, "TempleCol");
     if (!col || !col->tiles) return false;
 
     int index = tileY * map->width + tileX;
