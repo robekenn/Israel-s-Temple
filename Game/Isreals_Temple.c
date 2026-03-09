@@ -4,10 +4,14 @@
 #include <limits.h>
 #include <unistd.h>
 #include <libgen.h>
+#include "MapLoader/MapLoader.h"
+
 #ifdef __APPLE__
 #include <mach-o/dyld.h>
 #endif
 
+// On macOS, make the working directory match the executable location
+// so relative file paths still work when launching the app bundle.
 void SetWorkingDirectoryToExecutable(void)
 {
 #ifdef __APPLE__
@@ -22,76 +26,133 @@ void SetWorkingDirectoryToExecutable(void)
 #endif
 }
 
-void DrawBackground(Texture2D texture, float rotation, float scale, Color tint)
-{
-    float texWidth = texture.width * scale;
-    float texHeight = texture.height * scale;
-
-    int screenWidth = GetScreenWidth();
-    int screenHeight = GetScreenHeight();
-
-    for (float y = 0; y < screenHeight; y += texHeight)
-    {
-        for (float x = 0; x < screenWidth; x += texWidth)
-        {
-            Vector2 position = { x, y };
-            DrawTextureEx(texture, position, rotation, scale, tint);
-        }
-    }
-}
+// Track which map is currently loaded
+typedef enum MapType {
+    MAP_OUTSIDE,
+    MAP_INSIDE
+} MapType;
 
 
 int main(void)
 {
     SetWorkingDirectoryToExecutable();
-    InitWindow(1920, 1080, "Israel's Temple");
-    ToggleFullscreen();
 
+    InitWindow(1920, 1080, "Israel's Temple");
+    ToggleBorderlessWindowed();
     SetTargetFPS(60);
 
-    Texture2D texture = LoadTexture("Game/sprites/Land/Dark_Sand.png");
+    // -----------------------------
+    // Load first map (outside map)
+    // -----------------------------
+    TileMap map;
+    MapType currentMapType = MAP_OUTSIDE;
 
-    if (texture.id == 0) {
-        printf("Failed to load texture!\n");
+    if (!LoadTileMap("Game/MapLoader/Maps/Map1.json", &map)) {
+        CloseWindow();
+        return 1;
     }
 
-    float rotation = 0.0f;
-    float scale = 0.04f;
-
-    Vector2 texturePosition = {
-        GetScreenWidth() / 2.0f - (texture.width * scale) / 2.0f,
-        GetScreenHeight() / 2.0f - (texture.height * scale) / 2.0f
-    };
-
+    // -----------------------------
+    // Load player sprite sheet
+    // -----------------------------
     Texture2D spriteSheet = LoadTexture("Game/sprites/Characters/character_9-16.png");
+    SetTextureFilter(spriteSheet, TEXTURE_FILTER_POINT);
 
+    // -----------------------------
+    // Set up player
+    // -----------------------------
     Player player = {0};
-    player.position = (Vector2){ 640, 360 };
-    player.characterIndex = 0; // change 0-7 to pick a different character
-    player.direction = 0;      // start facing down
-    player.animFrame = 1;      // center frame for idle
+    player.characterIndex = 0;   // choose character row block
+    player.direction = 0;        // 0 = down
+    player.animFrame = 1;        // center frame for idle
     player.animTimer = 0.0f;
     player.speed = 120.0f;
 
-    float drawScale = 4.0f;
+    float PlayerScale = 3.5f;
+
+    // Start player near the outdoor temple entrance
+    // Adjust these tile coordinates if you want a different start point.
+    SetPlayerToTileCenter(&player, &map, 17, 18);
 
     while (!WindowShouldClose())
     {
-        //Update
-        UpdatePlayer(&player);
+        // -----------------------------
+        // Update player movement/collision
+        // -----------------------------
+        UpdatePlayer(&player, &map, PlayerScale);
 
-        //Draw
+        // -----------------------------
+        // Check interaction tile under player
+        // If the player is standing on a non-zero tile in the
+        // "Interactions" layer, they can press E to interact.
+        // -----------------------------
+        int interactionGid = GetLayerTileAtWorld(&map, "Interactions", player.position);
+
+        // Press E to switch maps
+        if (interactionGid != 0 && IsKeyPressed(KEY_E))
+        {
+            // Leaving outside map -> entering inside map
+            if (currentMapType == MAP_OUTSIDE)
+            {
+                UnloadTileMap(&map);
+
+                if (LoadTileMap("Game/MapLoader/Maps/Temple_Interior.json", &map))
+                {
+                    currentMapType = MAP_INSIDE;
+
+                    // Spawn player just inside the temple entrance
+                    // Change these tile coordinates if needed.
+                    SetPlayerToTileCenter(&player, &map, 12, 12);
+                }
+                else
+                {
+                    CloseWindow();
+                    return 1;
+                }
+            }
+            // Leaving inside map -> going back outside
+            else if (currentMapType == MAP_INSIDE)
+            {
+                UnloadTileMap(&map);
+
+                if (LoadTileMap("Game/MapLoader/Maps/Map1.json", &map))
+                {
+                    currentMapType = MAP_OUTSIDE;
+
+                    // Spawn player just south of the temple entrance
+                    SetPlayerToTileCenter(&player, &map, 17, 5);
+                }
+                else
+                {
+                    CloseWindow();
+                    return 1;
+                }
+            }
+        }
+
+        // -----------------------------
+        // Draw
+        // -----------------------------
         BeginDrawing();
-
         ClearBackground(BLACK);
-        DrawBackground(texture, rotation, scale, WHITE);
-        DrawPlayer(player, spriteSheet, drawScale);
-        //DrawTextureEx(texture, texturePosition, rotation, scale, WHITE);
+
+        DrawTileMap(&map);
+        DrawPlayer(player, spriteSheet, PlayerScale);
+
+        // Show interaction prompt if standing on an interaction tile
+        if (interactionGid != 0)
+        {
+            DrawText("Press E", 20, 20, 30, WHITE);
+        }
 
         EndDrawing();
     }
 
-    UnloadTexture(texture);
+    // -----------------------------
+    // Cleanup
+    // -----------------------------
+    UnloadTileMap(&map);
+    UnloadTexture(spriteSheet);
     CloseWindow();
 
     return 0;
