@@ -120,54 +120,139 @@ static void InitializePlayer(Game *game)
     game->player.speed = 120.0f;
 }
 
+static Vector2 GetPlayerInteractionPoint(Player player, float drawScale)
+{
+    float spriteHeight = SPRITE_HEIGHT * drawScale;
+
+    Vector2 point = player.position;
+    point.y += spriteHeight * 0.32f;
+
+    return point;
+}
+
 static void HandleInteraction(Game *game)
 {
-    int interactionGid = GetLayerTileAtWorld(&game->map, "Interactions", game->player.position);
-
     if (!IsKeyPressed(KEY_E))
         return;
 
-    if (interactionGid == INTERACT_BRONZE_ALTAR)
+    TileMap *map = &game->map;
+
+    Vector2 interactPoint = GetPlayerInteractionPoint(game->player, game->playerScale);
+
+    int playerTileX = 0;
+    int playerTileY = 0;
+    GetTileCoordsAtWorld(map, interactPoint, &playerTileX, &playerTileY);
+
+    /* -----------------------------------------
+       1) FRONT-ONLY INTERACTIONS
+       ----------------------------------------- */
+    int frontTileX = playerTileX;
+    int frontTileY = playerTileY;
+    GetTileInFront(playerTileX, playerTileY, game->player.direction, &frontTileX, &frontTileY);
+
+    int frontInteractionGid = GetLayerTileAt(map, "Interactions", frontTileX, frontTileY);
+
+    if (frontInteractionGid == INTERACT_TABERNACLE_ENTRANCE || frontInteractionGid == INTERACT_TABERNACLE_EXIT)
     {
-        if (HasHeldItem(&game->inventory, ITEM_CENSER))
-        {
-            SetHeldItem(&game->inventory, ITEM_CENSER_COAL);
-            printf("Bronze altar used: censer -> censer coal\n");
-        }
+        if (game->currentMapType == MAP_OUTSIDE)
+            SwitchMap(game, MAP_INSIDE);
+        else
+            SwitchMap(game, MAP_OUTSIDE);
+
         return;
     }
 
-    if (interactionGid == INTERACT_INCENSE_ALTAR)
+    /* -----------------------------------------
+       2) ANY-SIDE INTERACTIONS
+       Check current tile too, so being very close
+       still works.
+       ----------------------------------------- */
+    const int offsets[5][2] = {
+        { 0,  0 },  // current tile
+        { 0, -1 },  // up
+        { 0,  1 },  // down
+        {-1,  0 },  // left
+        { 1,  0 }   // right
+    };
+
+    for (int i = 0; i < 5; i++)
     {
-        if (HasHeldItem(&game->inventory, ITEM_CENSER_COAL))
+        int checkX = playerTileX + offsets[i][0];
+        int checkY = playerTileY + offsets[i][1];
+
+        int interactionGid = GetLayerTileAt(map, "Interactions", checkX, checkY);
+
+        if (interactionGid == 0)
+            continue;
+
+        if (interactionGid == INTERACT_BRONZE_ALTAR)
         {
-            bool changed = SetLayerTileAtXY(
-                &game->map,
-                "TempleCol",
-                INCENSE_ALTAR_TILE_X,
-                INCENSE_ALTAR_TILE_Y,
-                INCENSE_ALTAR_LIT_GID
-            );
-
-            printf("Incense altar used. changed=%d\n", changed ? 1 : 0);
-
-            if (changed)
+            if (HasHeldItem(&game->inventory, ITEM_CENSER))
             {
-                game->incenseAltarLit = true;
-                SetHeldItem(&game->inventory, ITEM_CENSER);
-                printf("Incense altar lit and saved in memory\n");
+                SetHeldItem(&game->inventory, ITEM_CENSER_COAL);
+                printf("Bronze altar used: censer -> censer coal\n");
             }
+            return;
         }
-        return;
+
+        if (interactionGid == INTERACT_INCENSE_ALTAR)
+        {
+            if (HasHeldItem(&game->inventory, ITEM_CENSER_COAL))
+            {
+                bool changed = SetLayerTileAtXY(
+                    map,
+                    "TempleCol",
+                    INCENSE_ALTAR_TILE_X,
+                    INCENSE_ALTAR_TILE_Y,
+                    INCENSE_ALTAR_LIT_GID
+                );
+
+                printf("Incense altar used. changed=%d\n", changed ? 1 : 0);
+
+                if (changed)
+                {
+                    game->incenseAltarLit = true;
+                    SetHeldItem(&game->inventory, ITEM_CENSER);
+                    printf("Incense altar lit and saved in memory\n");
+                }
+            }
+            return;
+        }
+
+        if (interactionGid == INTERACT_WOOD_STACK)
+        {
+            printf("Wood stack interaction not implemented yet\n");
+            return;
+        }
+
+        if (interactionGid == INTERACT_STORAGE)
+        {
+            printf("Storage interaction not implemented yet\n");
+            return;
+        }
+
+        if (interactionGid == INTERACT_SACRIFICE_TABLE)
+        {
+            printf("Sacrifice table interaction not implemented yet\n");
+            return;
+        }
+
+        if (interactionGid == INTERACT_LAVER)
+        {
+            printf("Laver interaction not implemented yet\n");
+            return;
+        }
+        if (interactionGid == INTERACT_MENORAH)
+        {
+            printf("Menorah interaction not implemented yet\n");
+            return;
+        }
+        if (interactionGid == INTERACT_SHOWBREAD_ALTER)
+        {
+            printf("Showbread Alter interaction not implemented yet\n");
+            return;
+        }
     }
-
-    if (interactionGid == 0)
-        return;
-
-    if (game->currentMapType == MAP_OUTSIDE)
-        SwitchMap(game, MAP_INSIDE);
-    else
-        SwitchMap(game, MAP_OUTSIDE);
 }
 
 static bool SwitchMap(Game *game, MapType newMapType)
