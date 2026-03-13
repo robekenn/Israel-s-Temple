@@ -11,6 +11,7 @@
 #include "../Interactions/Bronze_Altar/Bronze_Altar.h"
 #include "../Interactions/Incense_Altar/Incense_Altar.h"
 #include "../Interactions/Wood_Stack/Wood_Stack.h"
+#include "../Interactions/Storage/Storage.h"
 
 bool LoadMapForType(Game *game, MapType mapType);
 void InitializePlayer(Game *game);

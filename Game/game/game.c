@@ -211,6 +211,7 @@ void HandleInteraction(Game *game)
 
         if (interactionGid == INTERACT_STORAGE)
         {
+            getItemFromStorage(game);
             printf("Storage interaction not implemented yet\n");
             return;
         }
