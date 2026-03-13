@@ -356,3 +356,109 @@ bool IsMapCollisionAt(TileMap *map, Vector2 worldPosition)
 
     return IsMapCollisionTile(map, tileX, tileY);
 }
+
+void GetTileCoordsAtWorld(const TileMap *map, Vector2 worldPosition, int *tileX, int *tileY)
+{
+    if (!map) {
+        if (tileX) *tileX = -1;
+        if (tileY) *tileY = -1;
+        return;
+    }
+
+    float tileWidth = GetMapTileWidthOnScreen(map);
+    float tileHeight = GetMapTileHeightOnScreen(map);
+
+    if (tileX) *tileX = (int)(worldPosition.x / tileWidth);
+    if (tileY) *tileY = (int)(worldPosition.y / tileHeight);
+}
+
+void GetTileInFront(int playerTileX, int playerTileY, int direction, int *tileX, int *tileY)
+{
+    int x = playerTileX;
+    int y = playerTileY;
+
+    switch (direction)
+    {
+        case 3: y -= 1; break; // up
+        case 0: y += 1; break; // down
+        case 1: x -= 1; break; // left
+        case 2: x += 1; break; // right
+        default: break;
+    }
+
+    if (tileX) *tileX = x;
+    if (tileY) *tileY = y;
+}
+
+bool IsAdjacentTile(int ax, int ay, int bx, int by)
+{
+    int dx = ax - bx;
+    int dy = ay - by;
+
+    if (dx < 0) dx = -dx;
+    if (dy < 0) dy = -dy;
+
+    return (dx + dy) == 1;   // cardinal adjacency only
+}
+
+bool IsInteractionReachableFromAnySide(const TileMap *map, Vector2 playerWorldPos, int targetTileX, int targetTileY)
+{
+    int playerTileX, playerTileY;
+    GetTileCoordsAtWorld(map, playerWorldPos, &playerTileX, &playerTileY);
+
+    return IsAdjacentTile(playerTileX, playerTileY, targetTileX, targetTileY);
+}
+
+bool IsInteractionReachableFromFrontOnly(const TileMap *map, Vector2 playerWorldPos, int playerDirection, int targetTileX, int targetTileY)
+{
+    int playerTileX, playerTileY;
+    GetTileCoordsAtWorld(map, playerWorldPos, &playerTileX, &playerTileY);
+
+    int frontX, frontY;
+    GetTileInFront(playerTileX, playerTileY, playerDirection, &frontX, &frontY);
+
+    return (frontX == targetTileX && frontY == targetTileY);
+}
+
+int GetReachableInteractionAnySide(const TileMap *map, Vector2 playerWorldPos, const char *layerName, int *outTileX, int *outTileY)
+{
+    int playerTileX, playerTileY;
+    GetTileCoordsAtWorld(map, playerWorldPos, &playerTileX, &playerTileY);
+
+    const int offsets[4][2] = {
+        { 0, -1 }, // up
+        { 0,  1 }, // down
+        {-1,  0 }, // left
+        { 1,  0 }  // right
+    };
+
+    for (int i = 0; i < 4; i++) {
+        int tx = playerTileX + offsets[i][0];
+        int ty = playerTileY + offsets[i][1];
+
+        int tile = GetLayerTileAt(map, layerName, tx, ty);
+        if (tile != 0) {
+            if (outTileX) *outTileX = tx;
+            if (outTileY) *outTileY = ty;
+            return tile;
+        }
+    }
+
+    if (outTileX) *outTileX = -1;
+    if (outTileY) *outTileY = -1;
+    return 0;
+}
+
+int GetInteractionInFrontOnly(const TileMap *map, Vector2 playerWorldPos, int playerDirection, const char *layerName, int *outTileX, int *outTileY)
+{
+    int playerTileX, playerTileY;
+    GetTileCoordsAtWorld(map, playerWorldPos, &playerTileX, &playerTileY);
+
+    int tx, ty;
+    GetTileInFront(playerTileX, playerTileY, playerDirection, &tx, &ty);
+
+    if (outTileX) *outTileX = tx;
+    if (outTileY) *outTileY = ty;
+
+    return GetLayerTileAt(map, layerName, tx, ty);
+}

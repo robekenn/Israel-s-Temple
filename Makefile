@@ -14,7 +14,9 @@ APP_DIR = $(APP_NAME)/Contents
 APP_MACOS_DIR = $(APP_DIR)/MacOS
 
 # Main source folders to search
-SRC_DIRS = Game Game/Character_System Game/MapLoader Game/cJSON Game/game Game/platformUtils
+SRC_DIRS = Game Game/Character_System Game/MapLoader Game/cJSON Game/game Game/platformUtils Game/Inventory Game/Interactions/Bronze_Altar Game/Interactions/Incense_Altar Game/Interactions/Wood_Stack Game/Interactions/Storage
+#include "../../game/game.h"
+#include <stdio.h>
 
 # Find all .c files in those folders
 SRC = $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))

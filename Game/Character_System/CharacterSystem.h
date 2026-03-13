@@ -1,7 +1,7 @@
 #ifndef CHARACTER_SYSTEM_H
 #define CHARACTER_SYSTEM_H
 
-#include "raylib.h"
+#include "../src/raylib.h"
 #include "../MapLoader/MapLoader.h"
 
 // Keep your existing values here.
