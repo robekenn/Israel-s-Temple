@@ -8,7 +8,13 @@ typedef enum ItemType {
     ITEM_NONE = 0,
     ITEM_CENSER,
     ITEM_CENSER_COAL,
-    ITEM_HERBS
+    ITEM_INCENSE,
+    ITEM_OIL,
+    ITEM_WINE,
+    ITEM_WOOD,
+    ITEM_FLOUR,
+    TOOL_BLADE,
+    TOOL_ASH_BROOM
 } ItemType;
 
 typedef struct ItemDefinition {

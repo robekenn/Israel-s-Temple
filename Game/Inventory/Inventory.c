@@ -5,7 +5,13 @@ static ItemDefinition gItemDefs[] = {
     { ITEM_NONE,        "None",        { 0,  0, 16, 16 } },
     { ITEM_CENSER,      "Censer",      { 0,  0, 16, 16 } },
     { ITEM_CENSER_COAL, "Coal Censer", { 16, 0, 16, 16 } },
-    { ITEM_HERBS,       "Herbs",       { 32, 0, 16, 16 } }
+    { ITEM_INCENSE,       "Incense",       { 32, 0, 16, 16 } },
+    { ITEM_OIL,       "Oil",       { 48, 0, 16, 16 } },
+    { ITEM_WINE,       "Wine",       { 64, 0, 16, 16 } },
+    { ITEM_WOOD,       "Wood",       { 80, 0, 16, 16 } },
+    { ITEM_FLOUR,       "Flour",       { 96, 0, 16, 16 } },
+    { TOOL_BLADE,       "Blade",       { 112, 0, 16, 16 } },
+    { TOOL_ASH_BROOM,       "Ash Broom",       { 128, 0, 16, 16 } }
 };
 
 static const int gItemDefCount = sizeof(gItemDefs) / sizeof(gItemDefs[0]);
