@@ -95,6 +95,15 @@ void GameDraw(const Game *game)
     DrawText(TextFormat("Map: %s", game->currentMapType == MAP_OUTSIDE ? "OUTSIDE" : "INSIDE"), 20, 110, 20, WHITE);
 }
 
+/**
+ * @brief This function unloads the game textures
+ *
+ *
+ *
+ * @param game a pointer to the game object
+ *
+ * @return Void
+ */
 void GameUnload(Game *game)
 {
     if (game == NULL)
@@ -196,7 +205,7 @@ void HandleInteraction(Game *game)
 
         if (interactionGid == INTERACT_WOOD_STACK)
         {
-            printf("Wood stack interaction not implemented yet\n");
+            getWood(game);
             return;
         }
 

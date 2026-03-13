@@ -2,8 +2,29 @@
 #include "../../game/game.h"
 #include <stdio.h>
 
-void lightAltar(Game* game) {
-    if (HasHeldItem(&game->inventory, ITEM_CENSER_COAL)){
+void changeIncenseAltarStatus(Game* game){
+    game->incenseAltarLit = true;
+    printf("Incense altar lit and saved in memory\n");
+}
+
+void lightAltar(Game* game)
+{
+    // STEP 1: Player brings coal censer
+    if (!game->incenseCoalPlaced && HasHeldItem(&game->inventory, ITEM_CENSER_COAL))
+    {
+        printf("Coal placed on the incense altar.\n");
+
+        game->incenseCoalPlaced = true;
+
+        // Player now holds empty censer
+        SetHeldItem(&game->inventory, ITEM_CENSER);
+
+        return;
+    }
+
+    // STEP 2: Coal already placed, now player brings incense
+    if (game->incenseCoalPlaced && !game->incenseAltarLit && HasHeldItem(&game->inventory, ITEM_INCENSE))
+    {
         bool changed = SetLayerTileAtXY(
             &game->map,
             "TempleCol",
@@ -12,20 +33,17 @@ void lightAltar(Game* game) {
             INCENSE_ALTAR_LIT_GID
         );
 
-        printf("Incense altar used. changed=%d\n", changed ? 1 : 0);
+        printf("Incense burned on altar. changed=%d\n", changed ? 1 : 0);
 
         if (changed)
         {
-            game->incenseAltarLit = true;
-            SetHeldItem(&game->inventory, ITEM_CENSER);
-            printf("Incense altar lit and saved in memory\n");
+            SetHeldItem(&game->inventory, ITEM_NONE);
+            changeIncenseAltarStatus(game);
         }
+
+        return;
     }
-}
 
-
-void changeIncenseAltarStatus(Game* game){
-    game->incenseAltarLit = true;
-    SetHeldItem(&game->inventory, ITEM_CENSER);
-    printf("Incense altar lit and saved in memory\n");
+    // Feedback if wrong item
+    printf("You need coal first, then incense.\n");
 }

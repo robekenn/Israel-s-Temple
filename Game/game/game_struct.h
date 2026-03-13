@@ -45,6 +45,7 @@ typedef struct Game {
     Inventory inventory;
     MapType currentMapType;
     float playerScale;
+    bool incenseCoalPlaced;
     bool incenseAltarLit;
 } Game;
 
