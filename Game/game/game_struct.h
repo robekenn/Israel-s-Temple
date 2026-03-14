@@ -6,6 +6,7 @@
 #include "../Character_System/CharacterSystem.h"
 #include "../MapLoader/MapLoader.h"
 #include "../Inventory/Inventory.h"
+#include "../Interactions/Storage/Storage.h"
 
 
 #define OUTSIDE_MAP_PATH "Game/MapLoader/Maps/Map1.json"
@@ -47,6 +48,7 @@ typedef struct Game {
     float playerScale;
     bool incenseCoalPlaced;
     bool incenseAltarLit;
+    Storage storage;
 } Game;
 
 #endif
