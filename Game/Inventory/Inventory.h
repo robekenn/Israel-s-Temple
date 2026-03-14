@@ -32,10 +32,12 @@ void InitInventory(Inventory *inventory);
 bool AddItemToInventory(Inventory *inventory, ItemType type);
 bool RemoveHeldItem(Inventory *inventory);
 bool HasHeldItem(const Inventory *inventory, ItemType type);
+void SetHeldItem(Inventory *inventory, ItemType type);
 
 void DrawInventoryUI(const Inventory *inventory, Texture2D uiTexture, Texture2D itemSheet);
 
 const ItemDefinition *GetItemDefinition(ItemType type);
 const char *GetItemName(ItemType type);
+Rectangle GetItemSourceRect(ItemType type);
 
 #endif

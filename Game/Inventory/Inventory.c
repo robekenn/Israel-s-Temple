@@ -136,3 +136,8 @@ void DrawInventoryUI(const Inventory *inventory, Texture2D uiTexture, Texture2D 
 
     DrawTexturePro(itemSheet, def->sourceRect, iconDest, (Vector2){0, 0}, 0.0f, WHITE);
 }
+
+Rectangle GetItemSourceRect(ItemType type)
+{
+    return GetItemDefinition(type)->sourceRect;
+}

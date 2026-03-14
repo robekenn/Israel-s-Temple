@@ -32,6 +32,8 @@ bool GameInit(Game *game)
 
     game->inventoryUITexture = LoadTexture("Game/sprites/UI/Inventory.png");
     game->itemSpriteSheet = LoadTexture("Game/sprites/Items/Items.png");
+    SetTextureFilter(game->itemSpriteSheet, TEXTURE_FILTER_POINT);
+    InitStorage(&game->storage, "Game/sprites/UI/Storage_UI.png");
 
     SetTextureFilter(game->inventoryUITexture, TEXTURE_FILTER_POINT);
     SetTextureFilter(game->itemSpriteSheet, TEXTURE_FILTER_POINT);
@@ -62,6 +64,13 @@ void GameUpdate(Game *game)
     if (game == NULL)
         return;
 
+    if (game->storage.isOpen)
+    {
+        UpdateStorageWithGame(game);
+        return;
+    }
+
+
     UpdatePlayer(&game->player, &game->map, game->playerScale); //Updates the Players position
     HandleInteraction(game); //Handles any interactions
 }
@@ -80,8 +89,16 @@ void GameDraw(const Game *game)
     if (game == NULL)
         return;
 
+    
+
     DrawTileMap(&game->map); //Draws the map
     DrawPlayer(game->player, game->spriteSheet, game->playerScale); //Draws the player
+
+    if (game->storage.isOpen)
+    {
+        DrawStorage(&game->storage, game->itemSpriteSheet);
+    }
+    
     DrawInteractionPrompt(game); //Draws the interaction prompts
 
     DrawInventoryUI(
@@ -109,6 +126,7 @@ void GameUnload(Game *game)
     if (game == NULL)
         return;
 
+    UnloadStorage(&game->storage);
     UnloadTileMap(&game->map);
     UnloadTexture(game->spriteSheet);
     UnloadTexture(game->inventoryUITexture);
@@ -211,8 +229,7 @@ void HandleInteraction(Game *game)
 
         if (interactionGid == INTERACT_STORAGE)
         {
-            getItemFromStorage(game);
-            printf("Storage interaction not implemented yet\n");
+            HandleStorageInteraction(game);
             return;
         }
 
