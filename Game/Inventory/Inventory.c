@@ -11,7 +11,9 @@ static ItemDefinition gItemDefs[] = {
     { ITEM_WOOD,       "Wood",       { 80, 0, 16, 16 } },
     { ITEM_FLOUR,       "Flour",       { 96, 0, 16, 16 } },
     { TOOL_BLADE,       "Blade",       { 112, 0, 16, 16 } },
-    { TOOL_ASH_BROOM,       "Ash Broom",       { 128, 0, 16, 16 } }
+    { TOOL_ASH_BROOM,       "Ash Broom",       { 128, 0, 16, 16 } },
+    { ITEM_BUCKET,       "Bucket",       { 144, 0, 16, 16 } },
+    { ITEM_WATER_BUCKET,       "Water Bucket",       { 160, 0, 16, 16 } }
 };
 
 static const int gItemDefCount = sizeof(gItemDefs) / sizeof(gItemDefs[0]);

@@ -242,7 +242,7 @@ void HandleInteraction(Game *game)
 
         if (interactionGid == INTERACT_LAVER)
         {
-            printf("Laver interaction not implemented yet\n");
+            getWaterFromLaver(game);
             return;
         }
         if (interactionGid == INTERACT_MENORAH)
