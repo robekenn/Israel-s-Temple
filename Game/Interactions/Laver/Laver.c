@@ -3,6 +3,9 @@
 #include <stdio.h>
 
 void getWaterFromLaver(Game* game){
+    if (game == NULL) {
+        return;
+    }
     if (HasHeldItem(&game->inventory, ITEM_BUCKET)) {
         SetHeldItem(&game->inventory, ITEM_WATER_BUCKET);
         printf("Laver used: bucket -> water bucket\n");
