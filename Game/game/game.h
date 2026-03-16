@@ -12,6 +12,7 @@
 #include "../Interactions/Incense_Altar/Incense_Altar.h"
 #include "../Interactions/Wood_Stack/Wood_Stack.h"
 #include "../Interactions/Storage/Storage.h"
+#include "../Interactions/Menorah/Menorah.h"
 
 bool LoadMapForType(Game *game, MapType mapType);
 void InitializePlayer(Game *game);
