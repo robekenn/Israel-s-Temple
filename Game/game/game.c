@@ -22,8 +22,13 @@ bool GameInit(Game *game)
 
     game->currentMapType = MAP_OUTSIDE;
     game->playerScale = 3.5f;
+
     game->incenseAltarLit = false; //Inits Incense Alter
-    game->menorahStage = MENORAH_STAGE_UNPREPARED;
+    game->menorahStage = MENORAH_STAGE_UNPREPARED; //Inits Menorah
+
+    //Inits Bronze Altar
+    game->bronzeAltarLit = false;
+    game->bronzeAltarReadyForWood = false;
 
     if (!LoadTileMap(OUTSIDE_MAP_PATH, &game->map))
         return false;
@@ -212,7 +217,22 @@ void HandleInteraction(Game *game)
         //Gets the Coal from Bronze
         if (interactionGid == INTERACT_BRONZE_ALTAR)
         {
-            getCoalFromBronze(game);
+            if (HasHeldItem(&game->inventory, TOOL_ASH_BROOM))
+            {
+                prepareBronzeWithAshBroom(game);
+            }
+            else if (HasHeldItem(&game->inventory, ITEM_WOOD))
+            {
+                lightBronzeWithWood(game);
+            }
+            else if (HasHeldItem(&game->inventory, ITEM_CENSER))
+            {
+                getCoalFromBronze(game);
+            }
+            else
+            {
+                printf("Nothing happens.\n");
+            }
             return;
         }
 
@@ -308,6 +328,12 @@ void ApplyPersistentMapState(Game *game)
     {
         ApplyMenorahVisual(game);
     }
+    if (game->currentMapType == MAP_OUTSIDE)
+    {
+        ApplyBronzeAltarVisual(game);
+    }
+
+    
 }
 
 void DrawInteractionPrompt(const Game *game)
