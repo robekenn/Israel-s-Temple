@@ -23,6 +23,7 @@ bool GameInit(Game *game)
     game->currentMapType = MAP_OUTSIDE;
     game->playerScale = 3.5f;
     game->incenseAltarLit = false; //Inits Incense Alter
+    game->menorahStage = MENORAH_STAGE_UNPREPARED;
 
     if (!LoadTileMap(OUTSIDE_MAP_PATH, &game->map))
         return false;
@@ -246,7 +247,7 @@ void HandleInteraction(Game *game)
         }
         if (interactionGid == INTERACT_MENORAH)
         {
-            printf("Menorah interaction not implemented yet\n");
+            UseMenorah(game);
             return;
         }
         if (interactionGid == INTERACT_SHOWBREAD_ALTER)
@@ -256,6 +257,7 @@ void HandleInteraction(Game *game)
         }
     }
 }
+
 
 bool SwitchMap(Game *game, MapType newMapType)
 {
@@ -300,6 +302,11 @@ void ApplyPersistentMapState(Game *game)
         );
 
         printf("Reapply incense altar state: changed=%d\n", changed ? 1 : 0);
+    }
+
+    if (game->currentMapType == MAP_INSIDE)
+    {
+        ApplyMenorahVisual(game);
     }
 }
 

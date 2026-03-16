@@ -26,6 +26,7 @@
 // Confirmed interaction IDs
 #define INTERACT_INCENSE_ALTAR  109
 #define INTERACT_BRONZE_ALTAR   338
+#define INTERACT_MENORAH 121
 
 // These may still need adjusting
 #define INCENSE_ALTAR_TILE_X 12
@@ -37,6 +38,13 @@ typedef enum MapType {
     MAP_INSIDE
 } MapType;
 
+typedef enum MenorahStage {
+    MENORAH_STAGE_UNPREPARED = 0,
+    MENORAH_STAGE_BLADE_DONE = 1,
+    MENORAH_STAGE_OIL_DONE = 2,
+    MENORAH_STAGE_LIT = 3
+} MenorahStage;
+
 typedef struct Game {
     TileMap map;
     Player player;
@@ -46,9 +54,13 @@ typedef struct Game {
     Inventory inventory;
     MapType currentMapType;
     float playerScale;
+
     bool incenseCoalPlaced;
     bool incenseAltarLit;
+
     Storage storage;
+
+    MenorahStage menorahStage;
 } Game;
 
 #endif
