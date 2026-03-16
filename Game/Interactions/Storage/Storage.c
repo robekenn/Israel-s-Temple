@@ -182,6 +182,7 @@ void InitStorage(Storage *storage, const char *uiTexturePath)
     storage->slots[4].item = ITEM_FLOUR;
     storage->slots[5].item = TOOL_BLADE;
     storage->slots[6].item = TOOL_ASH_BROOM;
+    storage->slots[7].item = ITEM_BUCKET;
 }
 
 void UnloadStorage(Storage *storage)

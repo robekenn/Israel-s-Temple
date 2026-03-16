@@ -14,7 +14,9 @@ typedef enum ItemType {
     ITEM_WOOD,
     ITEM_FLOUR,
     TOOL_BLADE,
-    TOOL_ASH_BROOM
+    TOOL_ASH_BROOM,
+    ITEM_BUCKET,
+    ITEM_WATER_BUCKET
 } ItemType;
 
 typedef struct ItemDefinition {

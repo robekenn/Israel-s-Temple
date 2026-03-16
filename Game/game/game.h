@@ -13,6 +13,7 @@
 #include "../Interactions/Wood_Stack/Wood_Stack.h"
 #include "../Interactions/Storage/Storage.h"
 #include "../Interactions/Menorah/Menorah.h"
+#include "../Interactions/Laver/Laver.h"
 
 bool LoadMapForType(Game *game, MapType mapType);
 void InitializePlayer(Game *game);
