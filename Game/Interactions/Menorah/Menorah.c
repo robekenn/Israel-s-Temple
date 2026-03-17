@@ -1,5 +1,5 @@
 #include "Menorah.h"
-#include "../../game/game.h"
+#include "../../game/game_internal.h"
 #include <stdio.h>
 
 static void SetMenorahStage(Game *game, MenorahStage stage)

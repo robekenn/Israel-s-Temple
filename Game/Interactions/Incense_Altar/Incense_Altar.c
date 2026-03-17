@@ -1,5 +1,5 @@
 #include "Incense_Altar.h"
-#include "../../game/game.h"
+#include "../../game/game_internal.h"
 #include <stdio.h>
 
 void changeIncenseAltarStatus(Game* game){

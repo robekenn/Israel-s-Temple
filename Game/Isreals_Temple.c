@@ -17,7 +17,7 @@ int main(void)
         return 1;
     }
 
-    while (!WindowShouldClose())
+    while (!game.shouldCloseGame)
     {
         GameUpdate(&game);
 
