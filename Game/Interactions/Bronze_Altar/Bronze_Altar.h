@@ -1,8 +1,11 @@
 #ifndef BRONZE_ALTAR_H
 #define BRONZE_ALTAR_H
 
-#include "../../game/game_struct.h"
+typedef struct Game Game;
 
-void getCoalFromBronze(Game* game);
+void prepareBronzeWithAshBroom(Game *game);
+void lightBronzeWithWood(Game *game);
+void getCoalFromBronze(Game *game);
+void ApplyBronzeAltarVisual(Game *game);
 
 #endif

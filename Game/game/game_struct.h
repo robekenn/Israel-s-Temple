@@ -61,6 +61,9 @@ typedef struct Game {
     Storage storage;
 
     MenorahStage menorahStage;
+
+    bool bronzeAltarLit;
+    bool bronzeAltarReadyForWood;
 } Game;
 
 #endif
