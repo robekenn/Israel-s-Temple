@@ -1,5 +1,5 @@
 #include "Bronze_Altar.h"
-#include "../../game/game.h"
+#include "../../game/game_internal.h"
 #include <stdio.h>
 
 #define BRONZE_ALTAR_TILE_X 17
