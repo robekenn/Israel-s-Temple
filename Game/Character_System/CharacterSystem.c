@@ -82,7 +82,7 @@ Rectangle GetPlayerSourceRect(Player player)
 
 void UpdatePlayer(Player *player, TileMap *map, float drawScale)
 {
-    float dt = GetFrameTime();
+    float dt = fminf(GetFrameTime(), 0.05f);
     bool moving = false;
     float sprint = 1.0f;
 

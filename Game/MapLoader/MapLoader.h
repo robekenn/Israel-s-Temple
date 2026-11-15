@@ -44,6 +44,8 @@ void DrawTileMap(const TileMap *map);
 int GetLayerTileAtWorld(const TileMap *map, const char *layerName, Vector2 worldPosition);
 int GetLayerTileAt(const TileMap *map, const char *layerName, int tileX, int tileY);
 
+void SetLayerTileAt(TileMap *map, const char *layerName, int x, int y, int gid);
+
 bool IsMapCollisionAt(TileMap *map, Vector2 worldPosition);
 bool IsMapCollisionTile(TileMap *map, int tileX, int tileY);
 
@@ -66,7 +68,7 @@ float GetMapTileHeightOnScreen(const TileMap *map);
 #define INTERACT_TABERNACLE_EXIT     107
 #define INTERACT_INCENSE_ALTAR       109
 #define INTERACT_MENORAH             121
-#define INTERACT_SHOWBREAD_ALTER     122
+#define INTERACT_SHOWBREAD_TABLE     122
 
 #define INTERACT_BRONZE_ALTAR        338
 #define INTERACT_TABERNACLE_ENTRANCE 336
@@ -74,6 +76,8 @@ float GetMapTileHeightOnScreen(const TileMap *map);
 #define INTERACT_WOOD_STACK          341
 #define INTERACT_LAVER               342
 #define INTERACT_SACRIFICE_TABLE     343
+#define INTERACT_MENTOR              1001
+#define INTERACT_VISITOR             1002
 
 /* -------------------------------------------------
    Interaction helpers

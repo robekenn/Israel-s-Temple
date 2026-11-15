@@ -1,3 +1,6 @@
+.DEFAULT_GOAL := help
+.PHONY: help mac mac_app unx win all test clean raylib_unx raylib_win
+
 # Compiler definitions
 CC_MAC = clang
 CC_UNX = gcc
@@ -14,9 +17,8 @@ APP_DIR = $(APP_NAME)/Contents
 APP_MACOS_DIR = $(APP_DIR)/MacOS
 
 # Main source folders to search
-SRC_DIRS = Game Game/Character_System Game/MapLoader Game/cJSON Game/game Game/platformUtils Game/Inventory Game/Interactions/Bronze_Altar Game/Interactions/Incense_Altar Game/Interactions/Wood_Stack Game/Interactions/Storage Game/Interactions/Menorah Game/Interactions/Laver Game/Interactions ui/Prompts
-#include "../../game/game.h"
-#include <stdio.h>
+SRC_DIRS = Game Game/Character_System Game/MapLoader Game/cJSON Game/game Game/Campaign \
+	Game/Inventory Game/Interactions Game/Interactions/Storage
 
 # Find all .c files in those folders
 SRC = $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
@@ -46,7 +48,7 @@ raylib_unx:
 	@if [ ! -f "$(RAYLIB_LIB)" ]; then \
 		if [ ! -d "$(RAYLIB_DIR)" ]; then \
 			echo "Cloning raylib..."; \
-			git clone --depth 1 https://github.com/raysan5/raylib.git; \
+			git clone --depth 1 --branch 6.0 https://github.com/raysan5/raylib.git; \
 		fi; \
 		echo "Building raylib..."; \
 		cd $(RAYLIB_SRC) && $(MAKE) PLATFORM=PLATFORM_DESKTOP; \
@@ -59,7 +61,7 @@ raylib_win:
 	@if [ ! -f "$(RAYLIB_LIB)" ]; then \
 		if [ ! -d "$(RAYLIB_DIR)" ]; then \
 			echo "Cloning raylib..."; \
-			git clone --depth 1 https://github.com/raysan5/raylib.git; \
+			git clone --depth 1 --branch 6.0 https://github.com/raysan5/raylib.git; \
 		fi; \
 		echo "Building raylib for Windows..."; \
 		cd $(RAYLIB_SRC) && mingw32-make PLATFORM=PLATFORM_DESKTOP; \
@@ -69,13 +71,15 @@ raylib_win:
 # Mac build
 # -------------------------
 mac: raylib_unx
-	$(CC_MAC) $(INCLUDE_DIRS) $(SRC) $(RAYLIB_LIB) $(MAC_FRAMEWORKS) -o $(MAC_TARGET)
+	$(CC_MAC) $(GAME_CPPFLAGS) $(GAME_CFLAGS) $(INCLUDE_DIRS) $(SRC) $(RAYLIB_LIB) $(MAC_FRAMEWORKS) -o $(MAC_TARGET)
 
 mac_app: mac
 	rm -rf $(APP_NAME)
 	mkdir -p $(APP_MACOS_DIR)
 	cp $(MAC_TARGET) $(APP_MACOS_DIR)/Israels_Temple
-	cp -R Game $(APP_MACOS_DIR)/Game
+	mkdir -p $(APP_MACOS_DIR)/Game/MapLoader
+	cp -R Game/sprites $(APP_MACOS_DIR)/Game/
+	cp -R Game/MapLoader/Maps $(APP_MACOS_DIR)/Game/MapLoader/
 	echo '<?xml version="1.0" encoding="UTF-8"?>' > $(APP_DIR)/Info.plist
 	echo '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> $(APP_DIR)/Info.plist
 	echo '<plist version="1.0">' >> $(APP_DIR)/Info.plist
@@ -100,13 +104,13 @@ mac_app: mac
 # Linux build
 # -------------------------
 unx: raylib_unx
-	$(CC_UNX) $(INCLUDE_DIRS) -o $(UNX_TARGET) $(SRC) $(RAYLIB_LIB) -lGL -lm -lpthread -ldl -lrt -lX11
+	$(CC_UNX) $(GAME_CPPFLAGS) $(GAME_CFLAGS) $(INCLUDE_DIRS) -o $(UNX_TARGET) $(SRC) $(RAYLIB_LIB) $(LDFLAGS) -lGL -lm -lpthread -ldl -lrt -lX11
 
 # -------------------------
 # Windows build
 # -------------------------
 win: raylib_win
-	$(CC_WIN) $(INCLUDE_DIRS) -o $(WIN_TARGET) $(SRC) $(RAYLIB_LIB) -lopengl32 -lgdi32 -lwinmm
+	$(CC_WIN) $(GAME_CPPFLAGS) $(GAME_CFLAGS) $(INCLUDE_DIRS) -o $(WIN_TARGET) $(SRC) $(RAYLIB_LIB) -lopengl32 -lgdi32 -lwinmm
 
 # -------------------------
 # Build all
@@ -118,3 +122,10 @@ all: mac_app unx win
 # -------------------------
 clean:
 	rm -rf $(MAC_TARGET) $(UNX_TARGET) $(WIN_TARGET) $(APP_NAME)
+
+help:
+	@echo "Choose a target: make unx, make mac, make mac_app, make win, or make test"
+
+test:
+	$(CC) $(GAME_CPPFLAGS) $(GAME_CFLAGS) $(INCLUDE_DIRS) -std=c11 -Wall -Wextra -Werror -o tests/campaign_test tests/campaign_test.c Game/Campaign/campaign.c
+	./tests/campaign_test
