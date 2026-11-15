@@ -5,7 +5,12 @@
 
 int main(void)
 {
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    unsigned int windowFlags = FLAG_WINDOW_RESIZABLE;
+#if defined(__APPLE__)
+    // Match the Cocoa OpenGL drawable to GLFW's Retina framebuffer size.
+    windowFlags |= FLAG_WINDOW_HIGHDPI;
+#endif
+    SetConfigFlags(windowFlags);
     InitWindow(VIEW_WIDTH, VIEW_HEIGHT, "Israel's Temple");
     if (!IsWindowReady())
         return 1;
