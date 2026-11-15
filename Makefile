@@ -34,6 +34,7 @@ INCLUDE_DIRS = -IGame/src -IGame/Character_System -I$(RAYLIB_SRC) -I$(RAYLIB_SRC
 # macOS frameworks needed for raylib
 MAC_FRAMEWORKS = \
 	-framework Cocoa \
+	-framework QuartzCore \
 	-framework OpenGL \
 	-framework IOKit \
 	-framework CoreVideo \
