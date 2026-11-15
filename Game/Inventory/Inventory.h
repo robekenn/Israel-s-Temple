@@ -16,7 +16,11 @@ typedef enum ItemType {
     TOOL_BLADE,
     TOOL_ASH_BROOM,
     ITEM_BUCKET,
-    ITEM_WATER_BUCKET
+    ITEM_WATER_BUCKET,
+    ITEM_PREPARED_OFFERING,
+    ITEM_BREAD,
+    ITEM_COUNT,
+    ITEM_KEEP = ITEM_COUNT
 } ItemType;
 
 typedef struct ItemDefinition {
@@ -36,7 +40,7 @@ bool RemoveHeldItem(Inventory *inventory);
 bool HasHeldItem(const Inventory *inventory, ItemType type);
 void SetHeldItem(Inventory *inventory, ItemType type);
 
-void DrawInventoryUI(const Inventory *inventory, Texture2D uiTexture, Texture2D itemSheet);
+void DrawItemIcon(ItemType type, Texture2D itemSheet, Rectangle dest);
 
 const ItemDefinition *GetItemDefinition(ItemType type);
 const char *GetItemName(ItemType type);

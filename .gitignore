@@ -4,3 +4,6 @@ Israels_Temple.exe
 Israels_Temple_linux
 .DS_Store
 /raylib
+
+/Israels_Temple.app/
+/tests/campaign_test

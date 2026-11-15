@@ -1,4 +1,5 @@
 #include "MapLoader.h"
+#include "../game/view.h"
 #include "../cJSON/cJSON.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,6 +8,16 @@
 static char *ReadFileTextSimple(const char *filePath);
 static const MapLayer *FindLayer(const TileMap *map, const char *name);
 static MapLayer *FindLayerMutable(TileMap *map, const char *name);
+void SetLayerTileAt(TileMap *map, const char *layerName, int x, int y, int gid)
+{
+    if (x < 0 || x >= map->width || y < 0 || y >= map->height)
+        return;
+
+    MapLayer *layer = FindLayerMutable(map, layerName);
+    if (layer && layer->tiles)
+        layer->tiles[y * map->width + x] = gid;
+}
+
 static const MapTileset *FindTilesetForGid(const TileMap *map, int gid);
 static void DrawSingleLayer(const TileMap *map, const MapLayer *layer);
 
@@ -108,13 +119,13 @@ static const MapTileset *FindTilesetForGid(const TileMap *map, int gid)
 float GetMapTileWidthOnScreen(const TileMap *map)
 {
     if (!map || map->width == 0) return 0.0f;
-    return (float)GetScreenWidth() / map->width;
+    return (float)VIEW_WIDTH / map->width;
 }
 
 float GetMapTileHeightOnScreen(const TileMap *map)
 {
     if (!map || map->height == 0) return 0.0f;
-    return (float)GetScreenHeight() / map->height;
+    return (float)VIEW_HEIGHT / map->height;
 }
 
 bool LoadTileMap(const char *jsonFilePath, TileMap *map)
@@ -351,6 +362,7 @@ bool IsMapCollisionAt(TileMap *map, Vector2 worldPosition)
     float tileWidthOnScreen = GetMapTileWidthOnScreen(map);
     float tileHeightOnScreen = GetMapTileHeightOnScreen(map);
 
+    if (worldPosition.x < 0 || worldPosition.y < 0) return true;
     int tileX = (int)(worldPosition.x / tileWidthOnScreen);
     int tileY = (int)(worldPosition.y / tileHeightOnScreen);
 

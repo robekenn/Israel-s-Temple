@@ -13,7 +13,9 @@ static ItemDefinition gItemDefs[] = {
     { TOOL_BLADE,       "Blade",       { 112, 0, 16, 16 } },
     { TOOL_ASH_BROOM,       "Ash Broom",       { 128, 0, 16, 16 } },
     { ITEM_BUCKET,             "Bucket",       { 144, 0, 16, 16 } },
-    { ITEM_WATER_BUCKET,       "Water Bucket", { 160, 0, 16, 16 } }
+    { ITEM_WATER_BUCKET,       "Water Bucket", { 160, 0, 16, 16 } },
+    { ITEM_PREPARED_OFFERING,  "Prepared offering", { 0, 0, 0, 0 } },
+    { ITEM_BREAD,              "Twelve loaves", { 0, 0, 0, 0 } }
 };
 
 static const int gItemDefCount = sizeof(gItemDefs) / sizeof(gItemDefs[0]);
@@ -96,47 +98,36 @@ void SetHeldItem(Inventory *inventory, ItemType type)
     }
 }
 
-void DrawInventoryUI(const Inventory *inventory, Texture2D uiTexture, Texture2D itemSheet)
+void DrawItemIcon(ItemType type, Texture2D itemSheet, Rectangle dest)
 {
-    const float margin = 20.0f;
-    const float scale = 6.0f;
-
-    const float uiWidth = (float)uiTexture.width * scale;
-    const float uiHeight = (float)uiTexture.height * scale;
-
-    const float uiX = margin;
-    const float uiY = (float)GetScreenHeight() - uiHeight - margin;
-
-    Rectangle srcRect = {
-        0.0f, 0.0f,
-        (float)uiTexture.width,
-        (float)uiTexture.height
-    };
-
-    Rectangle destRect = {
-        uiX, uiY,
-        uiWidth, uiHeight
-    };
-
-    DrawTexturePro(uiTexture, srcRect, destRect, (Vector2){0, 0}, 0.0f, WHITE);
-
-    if (inventory == NULL || !inventory->occupied)
+    if (type == ITEM_NONE)
         return;
-
-    const ItemDefinition *def = GetItemDefinition(inventory->heldItem);
-
-    float iconSize = uiHeight * 0.55f;
-    if (uiWidth < uiHeight)
-        iconSize = uiWidth * 0.55f;
-
-    Rectangle iconDest = {
-        uiX + (uiWidth - iconSize) * 0.5f,
-        uiY + (uiHeight - iconSize) * 0.5f,
-        iconSize,
-        iconSize
-    };
-
-    DrawTexturePro(itemSheet, def->sourceRect, iconDest, (Vector2){0, 0}, 0.0f, WHITE);
+    if (type == ITEM_PREPARED_OFFERING || type == ITEM_BREAD)
+    {
+        const Color bronze = {154, 87, 50, 255};
+        const Color grain = {239, 189, 112, 255};
+        const Color dark = {67, 37, 34, 255};
+        float p = dest.width / 16.0f;
+        DrawRectangleRec((Rectangle){dest.x + 2*p, dest.y + 10*p, 12*p, 4*p}, dark);
+        DrawRectangleRec((Rectangle){dest.x + 3*p, dest.y + 9*p, 10*p, 3*p}, bronze);
+        if (type == ITEM_BREAD)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                float x = dest.x + (3 + 4*i)*p;
+                DrawRectangleRec((Rectangle){x, dest.y + 5*p, 3*p, 5*p}, grain);
+                DrawRectangleRec((Rectangle){x + p, dest.y + 6*p, p, 2*p}, bronze);
+            }
+        }
+        else
+        {
+            DrawRectangleRec((Rectangle){dest.x + 4*p, dest.y + 6*p, 5*p, 3*p}, grain);
+            DrawRectangleRec((Rectangle){dest.x + 10*p, dest.y + 5*p, 3*p, 5*p},
+                             (Color){160, 62, 55, 255});
+        }
+        return;
+    }
+    DrawTexturePro(itemSheet, GetItemSourceRect(type), dest, (Vector2){0}, 0, WHITE);
 }
 
 Rectangle GetItemSourceRect(ItemType type)
